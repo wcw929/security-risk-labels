@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>生成插件图标</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .icon-container {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .icon-item {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .icon {
+            margin-bottom: 10px;
+        }
+        .download-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .download-btn:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>安全风险标签插件图标</h1>
+    <p>右键点击图标选择"另存为"来保存PNG格式的图标文件</p>
+
+    <div class="icon-container">
+        <div class="icon-item">
+            <div class="icon">
+                <canvas id="icon16" width="16" height="16"></canvas>
+            </div>
+            <div>16x16</div>
+            <button class="download-btn" onclick="downloadIcon('icon16', 'icon16.png')">下载</button>
+        </div>
+
+        <div class="icon-item">
+            <div class="icon">
+                <canvas id="icon48" width="48" height="48"></canvas>
+            </div>
+            <div>48x48</div>
+            <button class="download-btn" onclick="downloadIcon('icon48', 'icon48.png')">下载</button>
+        </div>
+
+        <div class="icon-item">
+            <div class="icon">
+                <canvas id="icon128" width="128" height="128"></canvas>
+            </div>
+            <div>128x128</div>
+            <button class="download-btn" onclick="downloadIcon('icon128', 'icon128.png')">下载</button>
+        </div>
+    </div>
+
+    <script>
+        function drawIcon(canvas, size) {
+            const ctx = canvas.getContext('2d');
+            const scale = size / 128;
+
+            // 清除画布
+            ctx.clearRect(0, 0, size, size);
+
+            // 设置背景渐变
+            const gradient = ctx.createLinearGradient(0, 0, size, size);
+            gradient.addColorStop(0, '#667eea');
+            gradient.addColorStop(1, '#764ba2');
+
+            // 绘制圆角矩形背景
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.roundRect(0, 0, size, size, size * 0.2);
+            ctx.fill();
+
+            // 绘制盾牌图标
+            ctx.fillStyle = 'white';
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = 2 * scale;
+
+            // 盾牌轮廓
+            const centerX = size / 2;
+            const centerY = size / 2;
+            const shieldWidth = size * 0.6;
+            const shieldHeight = size * 0.7;
+
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY - shieldHeight/2);
+            ctx.lineTo(centerX - shieldWidth/2, centerY - shieldHeight/3);
+            ctx.lineTo(centerX - shieldWidth/2, centerY + shieldHeight/6);
+            ctx.lineTo(centerX, centerY + shieldHeight/2);
+            ctx.lineTo(centerX + shieldWidth/2, centerY + shieldHeight/6);
+            ctx.lineTo(centerX + shieldWidth/2, centerY - shieldHeight/3);
+            ctx.closePath();
+            ctx.fill();
+
+            // 绘制感叹号
+            ctx.fillStyle = '#764ba2';
+
+            // 感叹号主体
+            const exclamationWidth = size * 0.08;
+            const exclamationHeight = size * 0.3;
+            ctx.fillRect(
+                centerX - exclamationWidth/2,
+                centerY - exclamationHeight/2 - size * 0.05,
+                exclamationWidth,
+                exclamationHeight
+            );
+
+            // 感叹号点
+            const dotSize = size * 0.08;
+            ctx.beginPath();
+            ctx.arc(centerX, centerY + size * 0.2, dotSize/2, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        function downloadIcon(canvasId, filename) {
+            const canvas = document.getElementById(canvasId);
+            const link = document.createElement('a');
+            link.download = filename;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+
+        // 绘制所有尺寸的图标
+        window.onload = function() {
+            drawIcon(document.getElementById('icon16'), 16);
+            drawIcon(document.getElementById('icon48'), 48);
+            drawIcon(document.getElementById('icon128'), 128);
+        };
+
+        // 添加roundRect方法支持（如果浏览器不支持）
+        if (!CanvasRenderingContext2D.prototype.roundRect) {
+            CanvasRenderingContext2D.prototype.roundRect = function(x, y, width, height, radius) {
+                this.moveTo(x + radius, y);
+                this.lineTo(x + width - radius, y);
+                this.quadraticCurveTo(x + width, y, x + width, y + radius);
+                this.lineTo(x + width, y + height - radius);
+                this.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+                this.lineTo(x + radius, y + height);
+                this.quadraticCurveTo(x, y + height, x, y + height - radius);
+                this.lineTo(x, y + radius);
+                this.quadraticCurveTo(x, y, x + radius, y);
+            };
+        }
+    </script>
+</body>
+</html>

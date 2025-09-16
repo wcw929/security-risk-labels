@@ -1,0 +1,30 @@
+{
+  "manifest_version": 3,
+  "name": "安全风险标签展示",
+  "version": "1.0.0",
+  "description": "在指定网页展示安全风险的一级标签和二级标签",
+  "permissions": [
+    "activeTab",
+    "storage",
+    "notifications"
+  ],
+  "host_permissions": [
+    "https://api.github.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://salesmind.sankuai.com/aibd-workshop/call-quality-inspection*"],
+      "js": ["content.js"],
+      "css": ["styles.css"],
+      "run_at": "document_end"
+    }
+  ],
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}
